@@ -1,0 +1,87 @@
+#!/bin/sh
+
+# zMount by Zorge.R
+# please don't modify code
+# Использование скрипта в корыстных целях преследуется по понятиям Российской Федерации.
+# За модификацию без спроса, получите серпом по ... колосьям.
+
+############################################
+# определяем текущее местоположение скрипта
+path=`cat /ezxlocal/zmountpath`
+#
+############################################
+
+############################################
+# Корявками не трогать!
+#KUDA=cat $path/KUDA
+#OTKUDA=cat $path/OTKUDA
+export IFILENAME="$2"
+export EXIT="$2"
+export IDIRNAME=`busybox dirname "$2"`
+export DIRNAME=`busybox dirname "$0"`
+############################################
+
+#############################################
+# выбор точки монтирования (конечной точки) #
+#############################################
+
+OUTPUT_zmount=`ls -a | sed -e "/^\.$/d" | sed -e "/^\..$/d" | sed s/\ /~/g`
+showRadio "Select output" "`pwd`" "> ../../" "> Select folder" $OUTPUT_zmount
+RADIORES=$?
+if [ $RADIORES -eq 0 ]
+then
+	exit
+elif [ $RADIORES -eq 2 ]
+then
+	showRadio "Select folder" "`pwd`" $OUTPUT_zmount
+	RADIORES2=$?
+	if [ $RADIORES2 -eq -1 ]
+		then
+			exit
+		else
+			let n=$RADIORES2
+			CD=`ls -a | sed -e "/^\.$/d" | sed -e "/^\..$/d" | sed -n $n\p`
+			if [ -d "$CD" ]
+				then
+					export IDIRNAME=`pwd`
+					export IFILENAME="$CD"
+######################################################################
+# Вывод выбора в файл						     #
+######################################################################
+					cd "$IDIRNAME"
+					echo -ne "$IDIRNAME/$IFILENAME" >$path/KUDA
+					$path/io
+				else
+					export IDIRNAME=`pwd`
+					export IFILENAME="$CD"
+######################################################################
+# Вывод выбора в файл						     #
+######################################################################
+					cd "$IDIRNAME"
+					echo -ne "$IDIRNAME/$IFILENAME" >$path/KUDA
+					$path/io
+			fi
+	fi
+elif [ $RADIORES -eq 1 ]
+then
+	cd ../
+	exec "$0"
+else
+	let n=$RADIORES-2
+	CD=`ls -a | sed -e "/^\.$/d" | sed -e "/^\..$/d" | sed -n $n\p`
+	if [ -d "$CD" ]
+	then
+		cd "$CD"
+		exec "$0"
+	else
+		export IDIRNAME=`pwd`
+		export IFILENAME="$CD"
+######################################################################
+# Вывод выбора в файл						     #
+######################################################################
+		cd "$IDIRNAME"
+		echo -ne "$IDIRNAME/$IFILENAME" >$path/KUDA
+		$path/io
+	fi
+fi
+

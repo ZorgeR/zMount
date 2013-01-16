@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# zMount by Zorge.R
+# please don't modify code
+# Использование скрипта в корыстных целях преследуется по понятиям Российской Федерации.
+# За модификацию без спроса, получите серпом по ... колосьям.
+
+path=`cat /ezxlocal/zmountpath`
+
+# грабим переменные
+KUDA=`cat $path/KUDA`
+OTKUDA=`cat $path/OTKUDA`
+
+# монтируем
+	mount -o bind "$OTKUDA" "$KUDA"
+
+showQ "Info" "Mounting done." 2
+
+
